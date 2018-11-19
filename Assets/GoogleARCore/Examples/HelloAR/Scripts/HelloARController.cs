@@ -24,6 +24,8 @@ namespace GoogleARCore.Examples.HelloAR
     using GoogleARCore;
     using GoogleARCore.Examples.Common;
     using UnityEngine;
+    using UnityEngine.UI;
+    using UnityEngine.EventSystems;
 
 #if UNITY_EDITOR
     // Set up touch input propagation while using Instant Preview in the editor.
@@ -44,6 +46,11 @@ namespace GoogleARCore.Examples.HelloAR
         /// A prefab for tracking and visualizing detected planes.
         /// </summary>
         public GameObject DetectedPlanePrefab;
+
+        public float rayLength;
+        public LayerMask layer;
+        public Text[] a;
+
 
         /// <summary>
         /// A model to place when a raycast from a user touch hits a plane.
@@ -83,6 +90,7 @@ namespace GoogleARCore.Examples.HelloAR
         {
             _UpdateApplicationLifecycle();
 
+            MuthuFunc();
             // Hide snackbar when currently tracking at least one plane.
             Session.GetTrackables<DetectedPlane>(m_AllPlanes);
             bool showSearchingUI = true;
@@ -218,5 +226,25 @@ namespace GoogleARCore.Examples.HelloAR
                 }));
             }
         }
+        public void MuthuFunc()
+        {
+            if(Input.GetMouseButtonDown(0) && ! EventSystem.current.IsPointerOverGameObject())
+            {
+                RaycastHit hit;
+                Ray ray = FirstPersonCamera.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray,out hit,rayLength,layer))
+                {
+                    for (int i = 0; i <a.Length; i++)
+                    {
+                        if (hit.collider.name == "Pic"+i)
+                        {
+                            a[i].gameObject.SetActive(true);
+                        }
+                        a[i].gameObject.SetActive(false);
+                    }
+                }
+            }
+        }
+
     }
 }
